@@ -1,4 +1,8 @@
 apply plugin: 'com.android.application'
+apply plugin: 'bugly'
+
+def buglyAppId = "dcfa3ddb12"
+def buglyAppKey = "2c14e1c9-3d67-41e8-84a2-9add45d87981"
 
 android {
     compileSdkVersion 26
@@ -36,14 +40,33 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            buildConfigField 'String', 'BUGLYID', "\"${buglyAppId}\""
+        }
+
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            buildConfigField 'String', 'BUGLYID', "\"${buglyAppId}\""
         }
     }
+}
+
+// 仅作为符号表自动上传
+bugly {
+    appId = {buglyAppId}
+    appKey = {buglyAppKey}
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.0.0-beta1'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    compile "com.tencent.bugly:crashreport:$rootProject.ext.crashreportVersion"
+    compile "com.tencent.bugly:nativecrashreport:$rootProject.ext.nativecrashreportVersion"
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:0.5'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2'
